@@ -32,6 +32,11 @@
             android:id="@+id/navSesion"
             android:title="Sesion"
             />
+        <item
+            android:id="@+id/nav_resumen"
+            android:icon="@drawable/lista2"
+            android:title="Resumen" />
+
 
     </group>
 

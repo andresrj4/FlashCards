@@ -39,14 +39,14 @@ public class Agregar_maestro extends AppCompatActivity {
         if (extras != null) {
             int idDocente = extras.getInt("idDocenteM", -1);
             if (idDocente != -1) {
-                cargarDatosDocente(idDocente);
+                cargarDatosMaestro(idDocente);
             }
         }
 
         btnGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guardarDocente();
+                guardarMaestro();
             }
         });
 
@@ -68,10 +68,10 @@ public class Agregar_maestro extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    private void cargarDatosDocente(int idDocente) {
-        DbHelper conn = new DbHelper(this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
+    private void cargarDatosMaestro(int idDocente) {
+        DbHelper conn = new DbHelper(this);
         SQLiteDatabase db = conn.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Utilidades.TABLE_DOCENTE + " WHERE " + Utilidades.CAMPO_ID + " = " + idDocente, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Utilidades.TABLE_MAESTRO + " WHERE " + Utilidades.CAMPO_ID_MAESTRO + " = " + idDocente, null);
         if (cursor.moveToFirst()) {
             txtNombre.setText(cursor.getString(cursor.getColumnIndexOrThrow(Utilidades.CAMPO_NOMBRE)));
             txtContra.setText(cursor.getString(cursor.getColumnIndexOrThrow(Utilidades.CAMPO_CONTRASEÑA)));
@@ -80,7 +80,7 @@ public class Agregar_maestro extends AppCompatActivity {
         db.close();
     }
 
-    private void guardarDocente() {
+    private void guardarMaestro() {
         String vacio = "";
         String nombre = txtNombre.getText().toString().trim();
         String apellidos = txtContra.getText().toString().trim();
@@ -96,7 +96,7 @@ public class Agregar_maestro extends AppCompatActivity {
             if (nombre.matches(regexLetrasEspacios)) {
                 // Validar apellidos
                 if (apellidos.matches(regexLetrasNumeros)) {
-                    DbHelper conn = new DbHelper(Agregar_maestro.this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
+                    DbHelper conn = new DbHelper(Agregar_maestro.this);
                     SQLiteDatabase db = conn.getWritableDatabase();
                     ContentValues values = new ContentValues();
                     values.put(Utilidades.CAMPO_NOMBRE, nombre);
@@ -106,11 +106,11 @@ public class Agregar_maestro extends AppCompatActivity {
                     if (extras != null && extras.getInt("idDocenteM", -1) != -1) {
                         // Actualizar el registro existente
                         int idDocente = extras.getInt("idDocenteM");
-                        db.update(Utilidades.TABLE_DOCENTE, values, Utilidades.CAMPO_ID + "=?", new String[]{String.valueOf(idDocente)});
+                        db.update(Utilidades.TABLE_MAESTRO, values, Utilidades.CAMPO_ID_MAESTRO + "=?", new String[]{String.valueOf(idDocente)});
                         Toast.makeText(Agregar_maestro.this, "Docente actualizado correctamente", Toast.LENGTH_SHORT).show();
                     } else {
                         // Insertar un nuevo registro
-                        Long idResultado = db.insert(Utilidades.TABLE_DOCENTE, Utilidades.CAMPO_ID, values);
+                        Long idResultado = db.insert(Utilidades.TABLE_MAESTRO, null, values);
                         if (idResultado == -1) {
                             Toast.makeText(Agregar_maestro.this, "Error al guardar el docente", Toast.LENGTH_SHORT).show();
                         } else {
@@ -120,7 +120,7 @@ public class Agregar_maestro extends AppCompatActivity {
                     db.close();
                     limpiar();
                 } else {
-                    Toast.makeText(Agregar_maestro.this, "Los apellidos solo pueden contener letras y números", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Agregar_maestro.this, "La contraseña solo puede contener letras y números", Toast.LENGTH_SHORT).show();
                 }
             } else {
                 Toast.makeText(Agregar_maestro.this, "El nombre solo puede contener letras", Toast.LENGTH_SHORT).show();

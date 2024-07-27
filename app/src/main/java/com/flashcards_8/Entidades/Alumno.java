@@ -2,82 +2,58 @@ package com.flashcards_8.Entidades;
 
 public class Alumno {
 
-    private Integer id;
-    private String nombre;
-    private String apellido;
-    private String sexo;
-    private String edad;
-    private String edadmental;
-    private String comentarios;
+    private Integer idAlumno;
+    private String nombreAlumno;
+    private String apellidosAlumno;
+    private String sexoAlumno;
+    private String edadAlumno;
+    private String edadMentalAlumno;
+    private String comentariosAlumno;
 
-    public Alumno(Integer id, String nombre, String apellido, String sexo, String edad, String edadmental, String comentarios) {
-        this.id = id;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.sexo = sexo;
-        this.edad = edad;
-        this.edadmental = edadmental;
-        this.comentarios = comentarios;
+    public Alumno(Integer idAlumno, String nombreAlumno, String apellidosAlumno, String sexoAlumno, String edadAlumno, String edadMentalAlumno, String comentariosAlumno) {
+        this.idAlumno = idAlumno;
+        this.nombreAlumno = nombreAlumno;
+        this.apellidosAlumno = apellidosAlumno;
+        this.sexoAlumno = sexoAlumno;
+        this.edadAlumno = edadAlumno;
+        this.edadMentalAlumno = edadMentalAlumno;
+        this.comentariosAlumno = comentariosAlumno;
     }
 
-    public Alumno() {
-        // Puedes inicializar las propiedades con valores predeterminados aquí si lo deseas
-    }
+    public Alumno() {}
 
-    public Integer getId() {
-        return id;
+    public Integer getIdAlumno() {
+        return idAlumno;
     }
-
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdAlumno(Integer idAlumno) {
+        this.idAlumno = idAlumno;
     }
-
-    public String getNombre() {
-        return nombre;
+    public String getNombreAlumno() {return nombreAlumno;}
+    public void setNombreAlumno(String nombreAlumno) {
+        this.nombreAlumno = nombreAlumno;
     }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public String getApellidosAlumno() {
+        return apellidosAlumno;
     }
-
-    public String getApellido() {
-        return apellido;
+    public void setApellidosAlumno(String apellidosAlumno) {this.apellidosAlumno = apellidosAlumno;}
+    public String getSexoAlumno() {
+        return sexoAlumno;
     }
-
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
+    public void setSexoAlumno(String sexoAlumno) {
+        this.sexoAlumno = sexoAlumno;
     }
-
-    public String getSexo() {
-        return sexo;
+    public String getEdadAlumno() {
+        return edadAlumno;
     }
-
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
+    public void setEdadAlumno(String edadAlumno) {
+        this.edadAlumno = edadAlumno;
     }
-
-    public String getEdad() {
-        return edad;
+    public String getEdadMentalAlumno() {
+        return edadMentalAlumno;
     }
-
-    public void setEdad(String edad) {
-        this.edad = edad;
+    public void setEdadMentalAlumno(String edadMentalAlumno) {this.edadMentalAlumno = edadMentalAlumno;}
+    public String getComentariosAlumno() {
+        return comentariosAlumno;
     }
-
-    public String getEdadmental() {
-        return edadmental;
-    }
-
-    public void setEdadmental(String edadmental) {
-        this.edadmental = edadmental;
-    }
-
-    public String getComentarios() {
-        return comentarios;
-    }
-
-    public void setComentarios(String comentarios) {
-        this.comentarios = comentarios;
-    }
+    public void setComentariosAlumno(String comentariosAlumno) {this.comentariosAlumno = comentariosAlumno;}
 }
-

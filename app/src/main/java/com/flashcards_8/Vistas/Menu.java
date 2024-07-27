@@ -1,18 +1,17 @@
 package com.flashcards_8.Vistas;
 
-import android.content.DialogInterface;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import android.content.Intent;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -24,8 +23,6 @@ import com.flashcards_8.Utilidades.infoTec;
 import com.flashcards_8.db.DbHelper;
 import com.flashcards_8.Entidades.Palabra;
 import com.flashcards_8.Utilidades.Utilidades;
-
-
 import com.flashcards_8.db.DbManager;
 import com.google.android.material.navigation.NavigationView;
 
@@ -34,7 +31,6 @@ import java.util.List;
 
 public class Menu extends AppCompatActivity {
 
-    //Variables
     public int idMaestro;
     public int idAlumno;
     DrawerLayout drawerLayout;
@@ -42,135 +38,127 @@ public class Menu extends AppCompatActivity {
     NavigationView navigationView;
     private DbManager dbManager;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_drawer);
 
+        SharedPreferences sharedPref = getSharedPreferences("com.flashcards_8.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+        idMaestro = sharedPref.getInt("ID_MAESTRO", -1);
+        idAlumno = sharedPref.getInt("ID_ALUMNO", -1);
+
+        if (idMaestro == -1 || idAlumno == -1) {
+            Toast.makeText(this, "Error al obtener IDs", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         dbManager = new DbManager(this);
         dbManager.open();
 
-        // Insertar palabras en nivel 1
+        // Inserción de palabras (si es necesario)
         List<Palabra> palabras = GeneradorDePalabras.generarListaDePalabras();
-        dbManager.insertarMultiplesPalabrasNivel1(palabras);
-
-        // Insertar palabras en nivel 2
-        List<Palabra> palabras2 = GeneradorDePalabras.generarListaDePalabrasNivel2();
-        dbManager.insertarMultiplesPalabrasNivel2(palabras2);
-
-        // Insertar palabras en nivel 3
-        List<Palabra> palabras3 = GeneradorDePalabras.generarListaDePalabrasNivel3();
-        dbManager.insertarMultiplesPalabrasNivel3(palabras3);
+        dbManager.insertarMultiplesPalabras(palabras);
 
         dbManager.close();
 
-        // Código existente para configurar la interfaz de usuario
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            idMaestro = extras.getInt("idMaestro");
-            idAlumno = extras.getInt("idAlumno");
-        } else {
-            Log.d("Debug", "Intent was null");
-        }
 
         drawerLayout = findViewById(R.id.drawerLayout);
         buttonDrawerToggle = findViewById(R.id.buttonDrawerToggle);
         navigationView = findViewById(R.id.navigationView);
 
-        buttonDrawerToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.open();
+        buttonDrawerToggle.setOnClickListener(v -> drawerLayout.open());
+        // Items del "drawer" o menu lateral
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navAlumnos) {
+                Toast.makeText(Menu.this, "Lista de alumnos", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Menu.this, Alumnos.class));
             }
-        });
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem Item) {
-
-                int itemId = Item.getItemId();
-
-                if (itemId == R.id.navAlumnos){
-                    Toast.makeText(Menu.this, "Lista de alumnos", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Menu.this, Alumnos.class));
-                }
-
-                if (itemId == R.id.navMaestros){
-                    Toast.makeText(Menu.this, "Lista de docentes", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Menu.this, Docentes.class));
-                }
-
-                if (itemId == R.id.navPalabras){
-                    Toast.makeText(Menu.this, "Lista de palabras", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Menu.this, Palabras.class));
-                }
-
-                if (itemId == R.id.navSesion){
-                    Toast.makeText(Menu.this, "Sesiones de los alumnos", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Menu.this, Sesiones.class));
-                }
-
-                if (itemId == R.id.InfoTEC){
-                    Toast.makeText(Menu.this, "InfoTEC", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Menu.this, infoTec.class));
-                }
-
-                if (itemId == R.id.navSalir){
-                    Toast.makeText(Menu.this, "Salir de la aplicacion", Toast.LENGTH_SHORT).show();
-                    opcionSalir();
-                }
-
-                drawerLayout.closeDrawer(GravityCompat.START);
-                return true;
-
+            if (itemId == R.id.navMaestros) {
+                Toast.makeText(Menu.this, "Lista de docentes", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Menu.this, Maestros.class));
             }
-        });
 
+            if (itemId == R.id.navPalabras) {
+                Toast.makeText(Menu.this, "Lista de palabras", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Menu.this, Palabras.class));
+            }
+
+            if (itemId == R.id.navSesion) {
+                Toast.makeText(Menu.this, "Sesiones de los alumnos", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Menu.this, Sesiones.class);
+                intent.putExtra("idMaestro", idMaestro);
+                intent.putExtra("idAlumno", idAlumno);
+                startActivity(intent);
+            }
+            if (itemId == R.id.nav_resumen) {
+                Intent intent = new Intent(this, DetallesDelAlumno.class);
+                intent.putExtra("idAlumno", idAlumno);
+                startActivity(intent);
+            }
+
+            if (itemId == R.id.InfoTEC) {
+                Toast.makeText(Menu.this, "InfoTEC", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Menu.this, infoTec.class));
+            }
+
+            if (itemId == R.id.navSalir) {
+                Toast.makeText(Menu.this, "Salir de la aplicacion", Toast.LENGTH_SHORT).show();
+                opcionSalir();
+            }
+
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
     }
 
+    // Niveles
     public void OnClick2(View view) {
         if (view.getId() == R.id.IMGnvl1) {
-            if (obtenerCantidad(Utilidades.TABLE_PALABRAS_NIVEL1) != 0) {
-                menuNivel(Utilidades.TABLE_PALABRAS_NIVEL1);
+            if (obtenerCantidad(1) != 0) {
+                menuNivel(1);
             } else {
                 Toast.makeText(this, "Este nivel no tiene palabras", Toast.LENGTH_SHORT).show();
             }
         } else if (view.getId() == R.id.IMGnvl2) {
-            if (obtenerCantidad(Utilidades.TABLE_PALABRAS_NIVEL2) != 0) {
-                menuNivel(Utilidades.TABLE_PALABRAS_NIVEL2);
+            if (obtenerCantidad(2) != 0) {
+                menuNivel(2);
             } else {
                 Toast.makeText(this, "Este nivel no tiene palabras", Toast.LENGTH_SHORT).show();
             }
         } else if (view.getId() == R.id.IMGnvl3) {
-            if (obtenerCantidad(Utilidades.TABLE_PALABRAS_NIVEL3) != 0) {
-                menuNivel(Utilidades.TABLE_PALABRAS_NIVEL3);
+            if (obtenerCantidad(3) != 0) {
+                menuNivel(3);
             } else {
                 Toast.makeText(this, "Este nivel no tiene palabras", Toast.LENGTH_SHORT).show();
             }
         } else if (view.getId() == R.id.IMGnvlEsp) {
-            if (obtenerCantidad(Utilidades.TABLE_PALABRAS_NIVELESP) != 0) {
-                menuNivel(Utilidades.TABLE_PALABRAS_NIVELESP);
+            if (obtenerCantidad(4) != 0) {  // Si se tiene un nivel especial, lo consideramos como nivel 4
+                menuNivel(4);
             } else {
                 Toast.makeText(this, "Este nivel no tiene palabras", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-
-
-    private int obtenerCantidad(String Nivel) {
-        DbHelper conn = new DbHelper(this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
-        SQLiteDatabase dbCan = conn.getReadableDatabase();
+    // Diferentes significados dependiendo el modo de sesion
+    // Modo Practica o Flashcards -> intervalo de segundos entre palabras
+    // Modo Prueba -> la cantidad de palabras a preguntar
+    private int obtenerCantidad(int nivel) {
+        SQLiteDatabase dbCan = new DbHelper(this).getReadableDatabase();
         ArrayList<Palabra> listaPalabras = new ArrayList<>();
 
-        Cursor cursor = dbCan.rawQuery("SELECT " + Utilidades.CAMPO_ID + " , " + Utilidades.CAMPO_PALABRA + " FROM " + Nivel, null);
+        String[] columns = {Utilidades.CAMPO_ID_PALABRA, Utilidades.CAMPO_TEXTO_PALABRA};
+        Cursor cursor = dbCan.query(Utilidades.TABLE_PALABRAS, columns, Utilidades.CAMPO_NIVEL_PALABRA + " = ?", new String[]{String.valueOf(nivel)}, null, null, null);
         while (cursor.moveToNext()) {
-            // Utiliza el constructor con argumentos
-            Palabra palabra = new Palabra(cursor.getInt(0), cursor.getString(1), null, null);
-            listaPalabras.add(palabra);
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(Utilidades.CAMPO_ID_PALABRA));
+            String palabra = cursor.getString(cursor.getColumnIndexOrThrow(Utilidades.CAMPO_TEXTO_PALABRA));
+
+            Palabra palabraObj = new Palabra(id, palabra, null, null, nivel);
+            listaPalabras.add(palabraObj);
         }
         cursor.close();
         dbCan.close();
@@ -178,64 +166,74 @@ public class Menu extends AppCompatActivity {
         return listaPalabras.size();
     }
 
-
-    private void menuNivel(String nivel) {
-        String[] options = {"Flashcards","Prueba de Palabras"};
+    // Dependiendo el tipo de prueba se prepara el dato necesario:
+    // Modo Practica o Flashcards -> intervalo de segundos entre palabras
+    // Modo Prueba -> la cantidad de palabras a preguntar
+    private void menuNivel(int nivel) {
+        String[] options = {"Flashcards", "Prueba de Palabras"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Seleccionar un modo");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int opcion) {
-                // manejar clicks
-                Intent intent;
-                if (opcion == 1) {
-                    try {
-                        intent = new Intent(Menu.this, PruebaPalabras.class);
-                        intent.putExtra("nivel", nivel);
-                        intent.putExtra("idMaestro",idMaestro);
-                        intent.putExtra("idAlumno",idAlumno);
-                        intent.putExtra("prueba","Palabra");
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (opcion == 0) {
-                    menuTiempo(nivel);
-                }
+        builder.setItems(options, (dialog, opcion) -> {
+            Intent intent;  // Reemplazado por SharedPreferences
+            if (opcion == 1) {
+                menuCantidadPalabras(nivel);
+            } else if (opcion == 0) {
+                menuTiempo(nivel);
             }
         });
         builder.create().show();
     }
 
-    private void menuTiempo(String nivel) {
-        String[] options = {"2", "4","6", "8", "10"};
+    // Pregunta la cantidad de palabras de la prueba e inicia la actividad
+    private void menuCantidadPalabras(int nivel) {
+        String[] options = {"5", "10", "15", "20"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Número de palabras para la prueba");
+        builder.setItems(options, (dialog, opcion) -> {
+            int cantidadPalabras = Integer.parseInt(options[opcion]);
+            Intent intent = new Intent(Menu.this, ModoPrueba.class);
+            intent.putExtra("idMaestro", idMaestro);
+            intent.putExtra("idAlumno", idAlumno);
+            intent.putExtra("nivel", String.valueOf(nivel));
+            intent.putExtra("cantidadPalabras", cantidadPalabras);
+            startActivity(intent);  // "ModoPrueba"
+        });
+        builder.create().show();
+    }
+
+    // Pregunta el intervalo de segundos entre palabras e inicia la actividad
+    private void menuTiempo(int nivel) {
+        String[] options = {"2", "4", "6", "8", "10"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Intervalos de tiempo (seg)");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int opcion) {
-                // manejar clicks
-                Intent intent;intent = new Intent(Menu.this, ModoPractica.class);
-                intent.putExtra("idMaestro",idMaestro);
-                intent.putExtra("idAlumno",idAlumno);
-                intent.putExtra("nivel", nivel);
-                if (opcion == 0) {
-                    intent.putExtra("tiempo", 2000);
-                    startActivity(intent);
-                } else if (opcion == 1) {
-                    intent.putExtra("tiempo", 4000);
-                    startActivity(intent);
-                }else if (opcion == 2) {
-                    intent.putExtra("tiempo", 6000);
-                    startActivity(intent);
-                }else if (opcion == 3) {
-                    intent.putExtra("tiempo", 8000);
-                    startActivity(intent);
-                }else if (opcion == 4) {
-                    intent.putExtra("tiempo", 10000);
-                    startActivity(intent);
-                }
+        builder.setItems(options, (dialog, opcion) -> {
+            Intent intent = new Intent(Menu.this, ModoPractica.class);
+            intent.putExtra("idMaestro", idMaestro);
+            intent.putExtra("idAlumno", idAlumno);
+            intent.putExtra("nivel", String.valueOf(nivel));
+            int tiempo;
+            switch (opcion) {
+                case 0:
+                    tiempo = 2000;
+                    break;
+                case 1:
+                    tiempo = 4000;
+                    break;
+                case 2:
+                    tiempo = 6000;
+                    break;
+                case 3:
+                    tiempo = 8000;
+                    break;
+                case 4:
+                    tiempo = 10000;
+                    break;
+                default:
+                    tiempo = 2000;
+                    break;
             }
+            intent.putExtra("tiempo", tiempo);
+            startActivity(intent);  // "ModoPractica"
         });
         builder.create().show();
     }
@@ -243,18 +241,8 @@ public class Menu extends AppCompatActivity {
     private void opcionSalir() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("¿Desea salir de la aplicacion?")
-                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finishAffinity();
-
-                    }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                .setPositiveButton("Si", (dialog, which) -> finishAffinity())
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 }

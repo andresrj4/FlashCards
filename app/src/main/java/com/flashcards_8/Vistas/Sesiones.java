@@ -1,161 +1,95 @@
 package com.flashcards_8.Vistas;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.flashcards_8.Adapters.SesionAdapter;
 import com.flashcards_8.R;
-import com.flashcards_8.db.DbHelper;
+import com.flashcards_8.db.DbManager;
 import com.flashcards_8.Entidades.Sesion;
-import com.flashcards_8.Utilidades.Utilidades;
-
 import java.util.ArrayList;
+import java.util.List;
 
 public class Sesiones extends AppCompatActivity {
 
-    /*
-    public int idAlumno,aciertos,fallos;
-    public String puntaje;
+    public int idAlumno;
     TextView txtNombre;
-    ListView lvSesiones;
-    ArrayList<String> listaInformacion;
-    ArrayList<Sesion> listaSesiones;
-    DbHelper conn;
+    RecyclerView rvSesionesPractica, rvSesionesPrueba;
+    List<Sesion> listaSesionesPractica, listaSesionesPrueba;
+    DbManager dbManager;
 
-    int contadorTipoPrueba1 = 0;
-    int contadorTipoPrueba2 = 0;
-    */
-
+    // Se preparan los elementos del layout
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sesiones);
-        //full pantalla
-        /*
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         txtNombre = findViewById(R.id.txtAlumnoSesion);
-        conn = new DbHelper(this, Utilidades.DATABASE_NAME,null,Utilidades.DATABASE_VERSION);
-        lvSesiones = (ListView) findViewById(R.id.LVSesiones);
+        dbManager = new DbManager(this);
+        rvSesionesPractica = findViewById(R.id.rvSesionesPractica);
+        rvSesionesPrueba = findViewById(R.id.rvSesionesPrueba);
 
+        rvSesionesPractica.setLayoutManager(new LinearLayoutManager(this));
+        rvSesionesPrueba.setLayoutManager(new LinearLayoutManager(this));
+
+        // Se reciben los extras de la pantalla anterior ("Menu")
         Bundle extras = getIntent().getExtras();
+        // Debug para verificar que se reciben los extras
         if (extras != null) {
-            idAlumno = extras.getInt("idAlumno");
-
+            idAlumno = extras.getInt("idAlumno", -1);
+            if (idAlumno == -1) {
+                Log.d("Sesiones", "idAlumno no se pasó correctamente en el Intent");
+            }
         } else {
-            Log.d("Debug","Intent was null");
+            Log.d("Debug", "Intent was null");
+            idAlumno = -1; // Manejo de errores
         }
-        consultarListaSesiones();
 
-        ArrayAdapter adaptador = new ArrayAdapter(this,R.layout.list_item_segunda_lista,listaInformacion);
-        lvSesiones.setAdapter(adaptador);
-
-        lvSesiones.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                if (pos!=0){
-                    aciertos = listaSesiones.get(pos-1).getAciertos();
-                    fallos = listaSesiones.get(pos-1).getFallos();
-                    puntaje = listaSesiones.get(pos-1).getCalificacion();
-                    try {
-                        Intent intent = new Intent(Sesiones.this,GraficaAciertosFallos.class);
-                        intent.putExtra("aciertos",aciertos);
-                        intent.putExtra("fallos",fallos);
-                        intent.putExtra("puntaje",puntaje);
-                        startActivity(intent);
-
-                    }catch (Exception e){
-                        Toast.makeText(Sesiones.this, "Error: "+e, Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-            }
-        });
-        */
+        // Con los extras (ID del alumno) se recuperan las sesiones con la ID del alumno
+        if (idAlumno != -1) {
+            consultarListaSesiones();
+        } else {
+            Log.d("Sesiones", "No se pudo obtener el idAlumno.");
+        }
     }
 
-    /*
     private void consultarListaSesiones() {
-        SQLiteDatabase db=conn.getReadableDatabase();
-        Sesion sesionA = null;
-        listaSesiones = new ArrayList<Sesion>();
-        //Select * from usuarios
-        Cursor cursor = db.rawQuery("SELECT * FROM " +  Utilidades.TABLE_SESION_NINO + " WHERE " + Utilidades.CAMPO_ID_NINO + " = " + idAlumno,null);
+        listaSesionesPractica = dbManager.obtenerSesionesPractica(idAlumno);
+        listaSesionesPrueba = dbManager.obtenerSesionesPrueba(idAlumno);
 
-        while(cursor.moveToNext()){
-            sesionA = new Sesion();
-            sesionA.setId(cursor.getInt(0));
-            sesionA.setIdA(cursor.getInt(1));
-            sesionA.setNombreM(cursor.getString(2));
-            sesionA.setNombreA(cursor.getString(3));
-            sesionA.setDificultad(cursor.getString(4));
-            sesionA.setTipoPrueba(cursor.getString(5));
-            sesionA.setFechaI(cursor.getString(6));
-            sesionA.setFechaF(cursor.getString(7));
-            sesionA.setAciertos(cursor.getInt(8));
-            sesionA.setFallos(cursor.getInt(9));
-            sesionA.setCalificacion(cursor.getString(10));
-            listaSesiones.add(sesionA);
+        // Log para confirmar si se recuperan sesiones con la ID del alumno
+        Log.d("Sesiones", "IdAlumno: " + idAlumno);
+        Log.d("Sesiones", "Número de sesiones de práctica obtenidas: " + listaSesionesPractica.size());
+        Log.d("Sesiones", "Número de sesiones de prueba obtenidas: " + listaSesionesPrueba.size());
 
-            aciertos = sesionA.getAciertos();
-            fallos = sesionA.getFallos();
-            puntaje = sesionA.getCalificacion();
+        // Establecer adaptadores (SesionAdapter) después de obtener los datos
+        SesionAdapter adaptadorPractica = new SesionAdapter(this, (ArrayList<Sesion>) listaSesionesPractica);
+        rvSesionesPractica.setAdapter(adaptadorPractica);
 
-            txtNombre.setText(sesionA.getNombreA());
-
-            String tipoPruebaActual = sesionA.getTipoPrueba();
-            if (tipoPruebaActual.equals("Audio")) {
-                contadorTipoPrueba1++;
-            } else if (tipoPruebaActual.equals("Palabra")) {
-                contadorTipoPrueba2++;
-            }
-
-        }
-        obtenerLista();
+        SesionAdapter adaptadorPrueba = new SesionAdapter(this, (ArrayList<Sesion>) listaSesionesPrueba);
+        rvSesionesPrueba.setAdapter(adaptadorPrueba);
+        // Se continua en "SesionAdapter"
     }
 
-    private void obtenerLista() {
-        listaInformacion = new ArrayList<String>();
-        listaInformacion.add("Maestro"
-                + "     Nivel"
-                + "    Prueba"
-                + "              Inicio"
-                + "                      Final");
-        for(int i=0;i<listaSesiones.size();i++){
-            listaInformacion.add(listaSesiones.get(i).getNombreM()
-                    + "   "+listaSesiones.get(i).getDificultad()
-                    + "   "+listaSesiones.get(i).getTipoPrueba()
-                    + "   "+listaSesiones.get(i).getFechaI()
-                    + "   "+listaSesiones.get(i).getFechaF());
-        }
-    }
     public void onclick(View view) {
         finish();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == event.KEYCODE_BACK){
+        if (keyCode == event.KEYCODE_BACK) {
             finish();
         }
         return super.onKeyDown(keyCode, event);
     }
-
-     */
-
 }

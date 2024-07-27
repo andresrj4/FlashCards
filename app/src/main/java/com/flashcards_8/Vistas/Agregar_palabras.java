@@ -19,7 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.flashcards_8.R;
 import com.flashcards_8.Utilidades.Utilidades;
-import com.flashcards_8.db.DbHelper;
+import com.flashcards_8.db.DbManager;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class Agregar_palabras extends AppCompatActivity {
     private Uri audioUri;
     private EditText editTextPalabra;
     private Spinner spinnerNiveles;
-    private DbHelper dbHelper;
+    private DbManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,8 @@ public class Agregar_palabras extends AppCompatActivity {
         imageView = findViewById(R.id.imgPalabra);
         editTextPalabra = findViewById(R.id.campoPalabra);
         spinnerNiveles = findViewById(R.id.spinnerNiveles);
-        dbHelper = new DbHelper(this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
+        dbManager = new DbManager(this);
+        dbManager.open();
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.niveles_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -108,7 +109,7 @@ public class Agregar_palabras extends AppCompatActivity {
 
     private void saveWord() {
         String palabra = editTextPalabra.getText().toString().trim();
-        String nivel = spinnerNiveles.getSelectedItem().toString();
+        String nivelString = spinnerNiveles.getSelectedItem().toString();
 
         if (palabra.isEmpty() || imageUri == null || audioUri == null) {
             Toast.makeText(this, "Complete todos los campos", Toast.LENGTH_SHORT).show();
@@ -118,23 +119,29 @@ public class Agregar_palabras extends AppCompatActivity {
         byte[] imageBytes = convertUriToBytes(imageUri);
         byte[] audioBytes = convertUriToBytes(audioUri);
 
-        switch (nivel) {
-            case "Nivel 1":
-                dbHelper.insertarDatosNivel1(palabra, imageBytes, audioBytes);
+        int nivel;
+        switch (nivelString) {
+            case "1":
+                nivel = 1;
                 break;
-            case "Nivel 2":
-                dbHelper.insertarDatosNivel2(palabra, imageBytes, audioBytes);
+            case "2":
+                nivel = 2;
                 break;
-            case "Nivel 3":
-                dbHelper.insertarDatosNivel3(palabra, imageBytes, audioBytes);
+            case "3":
+                nivel = 3;
                 break;
             default:
                 Toast.makeText(this, "Nivel no válido", Toast.LENGTH_SHORT).show();
                 return;
         }
 
-        Toast.makeText(this, "Palabra guardada en " + nivel, Toast.LENGTH_SHORT).show();
-        finish();
+        long result = dbManager.insertarPalabra(palabra, imageBytes, audioBytes, nivel);
+        if (result != -1) {
+            Toast.makeText(this, "Palabra guardada en " + nivelString, Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            Toast.makeText(this, "Error al guardar la palabra", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private byte[] convertUriToBytes(Uri uri) {
@@ -153,4 +160,3 @@ public class Agregar_palabras extends AppCompatActivity {
         }
     }
 }
-

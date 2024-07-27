@@ -41,7 +41,7 @@ public class Alumnos extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // Inicializar la conexión con la base de datos y la ListView
-        conn = new DbHelper(Alumnos.this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
+        conn = new DbHelper(Alumnos.this);
         LValumnos = findViewById(R.id.LvAlumnos);
         mostrarLista();
     }
@@ -55,13 +55,13 @@ public class Alumnos extends AppCompatActivity {
 
         while (cursor.moveToNext()) {
             alumno = new Alumno();
-            alumno.setId(cursor.getInt(0));
-            alumno.setNombre(cursor.getString(1));
-            alumno.setApellido(cursor.getString(2));
-            alumno.setEdad(cursor.getString(3));
-            alumno.setEdadmental(cursor.getString(4));
-            alumno.setSexo(cursor.getString(5));
-            alumno.setComentarios(cursor.getString(6));
+            alumno.setIdAlumno(cursor.getInt(0));
+            alumno.setNombreAlumno(cursor.getString(1));
+            alumno.setApellidosAlumno(cursor.getString(2));
+            alumno.setEdadAlumno(cursor.getString(3));
+            alumno.setEdadMentalAlumno(cursor.getString(4));
+            alumno.setSexoAlumno(cursor.getString(5));
+            alumno.setComentariosAlumno(cursor.getString(6));
             listaAlumnos.add(alumno);
         }
         cursor.close();
@@ -72,7 +72,7 @@ public class Alumnos extends AppCompatActivity {
     private void obtenerLista() {
         listaInformacion = new ArrayList<>();
         for (Alumno alumno : listaAlumnos) {
-            listaInformacion.add(alumno.getNombre() + " " + alumno.getApellido());
+            listaInformacion.add(alumno.getNombreAlumno() + " " + alumno.getApellidosAlumno());
         }
     }
 
@@ -118,7 +118,7 @@ public class Alumnos extends AppCompatActivity {
         LValumnos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long idl) {
-                idAlumno = listaAlumnos.get(pos).getId();
+                idAlumno = listaAlumnos.get(pos).getIdAlumno();
                 seleccion = true;
             }
         });
@@ -167,8 +167,7 @@ public class Alumnos extends AppCompatActivity {
     // Eliminar un alumno de la base de datos
     private void eliminarAlumno() {
         SQLiteDatabase db = conn.getWritableDatabase();
-        db.delete(Utilidades.TABLE_ALUMNOS, Utilidades.CAMPO_ID + " = " + idAlumno, null);
-        db.delete(Utilidades.TABLE_SESION_NINO, Utilidades.CAMPO_ID_NINO + " = " + idAlumno, null);
+        db.delete(Utilidades.TABLE_ALUMNOS, Utilidades.CAMPO_ID_ALUMNO + " = " + idAlumno, null);
         Toast.makeText(this, "Se eliminaron todos los datos del alumno", Toast.LENGTH_SHORT).show();
         db.close();
         finish();

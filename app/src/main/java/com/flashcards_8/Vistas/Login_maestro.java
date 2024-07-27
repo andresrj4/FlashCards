@@ -1,6 +1,8 @@
 package com.flashcards_8.Vistas;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -19,15 +21,11 @@ public class Login_maestro extends AppCompatActivity {
 
     private EditText txtUsuario, txtContrasena;
     private Button btnIniciarSesion, btnAgregar;
-    private DbHelper dbHelper;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_maestro);
-
-        DbHelper conn = new DbHelper(this, Utilidades.DATABASE_NAME,null,Utilidades.DATABASE_VERSION);
 
         txtUsuario = findViewById(R.id.txt_usuario);
         txtContrasena = findViewById(R.id.txt_contrasena);
@@ -37,10 +35,8 @@ public class Login_maestro extends AppCompatActivity {
         btnAgregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent i = new Intent(Login_maestro.this, Agregar_maestro.class);
-                startActivity(i);
-
+                Intent intent = new Intent(Login_maestro.this, Agregar_maestro.class);
+                startActivity(intent);
             }
         });
 
@@ -51,63 +47,56 @@ public class Login_maestro extends AppCompatActivity {
                 String contrasena = txtContrasena.getText().toString();
 
                 if (usuario.isEmpty() || contrasena.isEmpty()) {
-                    // Se verifica si el campo de usuario o contraseña está vacío
                     Toast.makeText(Login_maestro.this, "Por favor, ingresa tu nombre de usuario y contraseña", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Si no están vacíos, se procede a validar las credenciales
-                    if (validarCredenciales(usuario, contrasena)) {
-                        // Credenciales válidas, iniciar la actividad principal
+                    int idMaestro = validarCredenciales(usuario, contrasena);
+                    if (idMaestro != -1) {
+                        guardarIdMaestroEnSharedPreferences(idMaestro);
                         Intent intent = new Intent(Login_maestro.this, Login_alumno.class);
+                        intent.putExtra("idMaestro", idMaestro);
                         startActivity(intent);
                         finish();
                     } else {
-                        // Credenciales inválidas, se muestra un mensaje de error
                         Toast.makeText(Login_maestro.this, "Nombre de usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
-
-
     }
 
-    /**
-     * Método para validar las credenciales del usuario en la base de datos.
-     * @param usuario El nombre de usuario ingresado.
-     * @param contrasena La contraseña ingresada.
-     * @return true si las credenciales son válidas, false de lo contrario.
-     */
-    private boolean validarCredenciales(String usuario, String contrasena) {
-        DbHelper dbHelper = new DbHelper(Login_maestro.this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
+    private int validarCredenciales(String usuario, String contrasena) {
+        DbHelper dbHelper = new DbHelper(Login_maestro.this);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Consultar la base de datos para verificar si el usuario y la contraseña coinciden
-        String[] projection = {
-                Utilidades.CAMPO_ID
-        };
+        String[] projection = {Utilidades.CAMPO_ID_MAESTRO};
         String selection = Utilidades.CAMPO_NOMBRE + " = ? AND " + Utilidades.CAMPO_CONTRASEÑA + " = ?";
         String[] selectionArgs = {usuario, contrasena};
 
         Cursor cursor = db.query(
-                Utilidades.TABLE_DOCENTE, // Nombre de la tabla en la que se realizará la consulta
-                projection,              // Columnas que se desean recuperar de la tabla
-                selection,               // Cláusula WHERE para filtrar los resultados
-                selectionArgs,           // Valores de los parámetros de la cláusula WHERE
-                null,                    // GROUP BY: Agrupamiento de filas (no se utiliza en este caso)
-                null,                    // HAVING: Restricciones para grupos (no se utiliza en este caso)
-                null                     // ORDER BY: Orden de las filas (no se utiliza en este caso)
+                Utilidades.TABLE_MAESTRO,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
         );
 
-
-        // Si el cursor tiene al menos un resultado, significa que las credenciales son válidas
-        boolean credencialesValidas = cursor.getCount() > 0;
+        int idMaestro = -1;
+        if (cursor.moveToFirst()) {
+            idMaestro = cursor.getInt(cursor.getColumnIndexOrThrow(Utilidades.CAMPO_ID_MAESTRO));
+        }
 
         cursor.close();
         db.close();
 
-        return credencialesValidas;
+        return idMaestro;
     }
 
-
+    private void guardarIdMaestroEnSharedPreferences(int idMaestro) {
+        SharedPreferences sharedPref = getSharedPreferences("com.flashcards_8.PREFERENCE_FILE_KEY", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt("ID_MAESTRO", idMaestro);
+        editor.apply();
+    }
 }
-

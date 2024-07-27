@@ -1,123 +1,83 @@
 package com.flashcards_8.Entidades;
 
-import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Sesion implements Serializable {
-    private Integer id;
-    private Integer idA;
-    private String nombreM;
-    private String nombreA;
-    private String dificultad;
-    private String tipoPrueba;
-    private String fechaI;
-    private String fechaF;
-    private Integer aciertos;
-    private Integer fallos;
-    private String calificacion;
+// Clase para cualquier tipo de sesion (ModoPractica -> Flashcards | ModoPrueba -> Simulacion de examen)
+public class Sesion {
+    private int idSesion;
+    private int idAlumno;
+    private int idMaestro;
+    private String fechaSesion;
+    private int aciertosSesion;
+    private int fallosSesion;
+    private String calificacionSesion;
+    private int duracionSesion;
+    private int nivelSesion;
+    private String tipoSesion;
+    private int intervaloSesion;
+    private Map<Integer, PalabraSesion> respuestasSesion = new HashMap<>();
 
-    public Sesion(Integer id, Integer idA, String nombreM, String nombreA, String dificultad, String tipoPrueba, String fechaI, String fechaF, Integer aciertos, Integer fallos, String calificacion) {
-        this.id = id;
-        this.idA = idA;
-        this.nombreM = nombreM;
-        this.nombreA = nombreA;
-        this.dificultad = dificultad;
-        this.tipoPrueba = tipoPrueba;
-        this.fechaI = fechaI;
-        this.fechaF = fechaF;
-        this.aciertos = aciertos;
-        this.fallos = fallos;
-        this.calificacion = calificacion;
+    public Sesion() {}
+
+    public Sesion(int idSesion, int idMaestro, String fechaSesion, int nivelSesion, String tipoSesion, int intervaloSesion) {
+        this.idSesion = idSesion;
+        this.idMaestro = idMaestro;
+        this.fechaSesion = fechaSesion;
+        this.nivelSesion = nivelSesion;
+        this.tipoSesion = tipoSesion;
+        this.intervaloSesion = intervaloSesion;
+        this.aciertosSesion = 0;
+        this.fallosSesion = 0;
+        this.duracionSesion = 0;
+        this.calificacionSesion = "";
     }
 
-    public Sesion() {
-
+    public Sesion(int idSesion, String fechaSesion, int nivelSesion, String tipoSesion) {
+        this.idSesion = idSesion;
+        this.fechaSesion = fechaSesion;
+        this.nivelSesion = nivelSesion;
+        this.tipoSesion = tipoSesion;
+        this.aciertosSesion = 0;
+        this.fallosSesion = 0;
+        this.duracionSesion = 0;
+        this.calificacionSesion = "";
+        this.intervaloSesion = 0;
     }
 
-    public Integer getId() {
-        return id;
+    // Constructor para prueba
+    public Sesion(int idSesion, int idMaestro, String fechaSesion, int nivelSesion, String tipoSesion, int intervaloSesion, int aciertosSesion, int fallosSesion, String calificacionSesion) {
+        this.idSesion = idSesion;
+        this.idMaestro = idMaestro;
+        this.fechaSesion = fechaSesion;
+        this.nivelSesion = nivelSesion;
+        this.tipoSesion = tipoSesion;
+        this.intervaloSesion = intervaloSesion;
+        this.aciertosSesion = aciertosSesion;
+        this.fallosSesion = fallosSesion;
+        this.calificacionSesion = calificacionSesion;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getIdA() {
-        return idA;
-    }
-
-    public void setIdA(Integer idA) {
-        this.idA = idA;
-    }
-
-    public String getNombreM() {
-        return nombreM;
-    }
-
-    public void setNombreM(String nombreM) {
-        this.nombreM = nombreM;
-    }
-
-    public String getNombreA() {
-        return nombreA;
-    }
-
-    public void setNombreA(String nombreA) {
-        this.nombreA = nombreA;
-    }
-
-    public String getDificultad() {
-        return dificultad;
-    }
-
-    public void setDificultad(String dificultad) {
-        this.dificultad = dificultad;
-    }
-
-    public String getTipoPrueba() {
-        return tipoPrueba;
-    }
-
-    public void setTipoPrueba(String tipoPrueba) {
-        this.tipoPrueba = tipoPrueba;
-    }
-
-    public String getFechaI() {
-        return fechaI;
-    }
-
-    public void setFechaI(String fechaI) {
-        this.fechaI = fechaI;
-    }
-
-    public String getFechaF() {
-        return fechaF;
-    }
-
-    public void setFechaF(String fechaF) {
-        this.fechaF = fechaF;
-    }
-
-    public Integer getAciertos() {
-        return aciertos;
-    }
-
-    public void setAciertos(Integer aciertos) {
-        this.aciertos = aciertos;
-    }
-
-    public Integer getFallos() {
-        return fallos;
-    }
-
-    public void setFallos(Integer fallos) {
-        this.fallos = fallos;
-    }
-
-    public String getCalificacion() {
-        return calificacion;
-    }
-
-    public void setCalificacion(String calificacion) {
-        this.calificacion = calificacion;
-    }
+    public int getIdSesion() { return idSesion; }
+    public void setIdSesion(int idSesion) { this.idSesion = idSesion; }
+    public int getIdAlumno() { return idAlumno; }
+    public void setIdAlumno(int idAlumno) { this.idAlumno = idAlumno; }
+    public int getIdMaestro() { return idMaestro; }
+    public String getFechaSesion() { return fechaSesion; }
+    public void setFechaSesion(String fechaSesion) { this.fechaSesion = fechaSesion; }
+    public int getAciertosSesion() { return aciertosSesion; }
+    public void setAciertosSesion(int aciertosSesion) { this.aciertosSesion = aciertosSesion; }
+    public int getFallosSesion() { return fallosSesion; }
+    public void setFallosSesion(int fallosSesion) { this.fallosSesion = fallosSesion; }
+    public String getCalificacionSesion() { return calificacionSesion; }
+    public void setCalificacionSesion(String calificacionSesion) { this.calificacionSesion = calificacionSesion; }
+    public int getDuracionSesion() { return duracionSesion; }
+    public void setDuracionSesion(int duracionSesion) { this.duracionSesion = duracionSesion; }
+    public int getNivelSesion() { return nivelSesion; }
+    public void setNivelSesion(int nivelSesion) { this.nivelSesion = nivelSesion; }
+    public String getTipoSesion() { return tipoSesion; }
+    public void setTipoSesion(String tipoSesion) { this.tipoSesion = tipoSesion; }
+    public int getIntervaloSesion() { return intervaloSesion; }
+    public void setIntervaloSesion(int intervaloSesion) { this.intervaloSesion = intervaloSesion; }  // Añadir este método
+    public Map<Integer, PalabraSesion> getRespuestasSesion() { return respuestasSesion; }
 }

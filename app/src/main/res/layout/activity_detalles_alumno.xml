@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".Vistas.DetallesDelAlumno">
+
+    <LinearLayout
+        android:id="@+id/linearLayoutAlumno"
+        android:layout_width="180dp"
+        android:layout_height="match_parent"
+        android:background="@color/Azul_zodiaco"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/btnVolverDetallesAlumno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/purple_500"
+                android:text="Volver"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.884" />
+
+            <ImageView
+                android:id="@+id/imageViewAlumno"
+                android:layout_width="107dp"
+                android:layout_height="92dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.504"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.087"
+                app:srcCompat="@drawable/alumno" />
+
+            <TextView
+                android:id="@+id/textViewTituloAlumno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:text="Resumen del Alumno"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.354" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LLDetallesAlumno"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:layout_constraintStart_toEndOf="@+id/linearLayoutAlumno"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvPalabrasVistasTotales"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Palabras vistas totales:"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvPalabraMasVista"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Palabra más vista:"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvPalabraMasAcertada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Palabra más acertada:"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvPalabraMenosAcertada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Palabra menos acertada:"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvIntervaloPreferido"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Intervalo preferido:"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvTiempoPromedioPorPalabra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiempo promedio por palabra:"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvSesionesPracticaJugadas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sesiones de práctica jugadas:"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvSesionesPruebaJugadas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sesiones de prueba jugadas:"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

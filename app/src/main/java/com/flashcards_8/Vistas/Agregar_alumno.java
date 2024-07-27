@@ -97,14 +97,14 @@ public class Agregar_alumno extends AppCompatActivity {
                 }
 
                 // Realizar la inserción o actualización en la base de datos
-                DbHelper conn = new DbHelper(Agregar_alumno.this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
+                DbHelper conn = new DbHelper(Agregar_alumno.this);
                 SQLiteDatabase db = conn.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put(Utilidades.CAMPO_NOMBRE, nombre);
-                values.put(Utilidades.CAMPO_APELLIDOS, apellidos);
-                values.put(Utilidades.CAMPO_EDAD, edad);
+                values.put(Utilidades.CAMPO_APELLIDOS_ALUMNO, apellidos);
+                values.put(Utilidades.CAMPO_EDAD_ALUMNO, edad);
                 values.put(Utilidades.CAMPO_EDAD_MENTAL, edadMental);
-                values.put(Utilidades.CAMPO_SEXO, sexo);
+                values.put(Utilidades.CAMPO_SEXO_ALUMNO, sexo);
                 values.put(Utilidades.CAMPO_COMENTARIOS, comentarios);
 
                 long idResultado;
@@ -113,24 +113,27 @@ public class Agregar_alumno extends AppCompatActivity {
                     idResultado = db.insert(Utilidades.TABLE_ALUMNOS, null, values);
                 } else {
                     // Actualizar alumno existente
-                    idResultado = db.update(Utilidades.TABLE_ALUMNOS, values, Utilidades.CAMPO_ID + " = ?", new String[]{String.valueOf(idAlumno)});
+                    idResultado = db.update(Utilidades.TABLE_ALUMNOS, values, Utilidades.CAMPO_ID_ALUMNO + " = ?", new String[]{String.valueOf(idAlumno)});
                 }
                 db.close();
 
                 if (idResultado == -1) {
                     Toast.makeText(Agregar_alumno.this, "Error al guardar el alumno", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_CANCELED); // Aquí configuramos el resultado como CANCELADO
                 } else {
                     Toast.makeText(Agregar_alumno.this, "Alumno guardado correctamente", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK); // Aquí configuramos el resultado como OK
                     limpiar();
                 }
+
+                finish();
             }
         });
 
         btnvolver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                setResult(RESULT_OK, intent);
+                setResult(RESULT_CANCELED); // Aquí configuramos el resultado como CANCELADO
                 finish();
             }
         });
@@ -139,7 +142,9 @@ public class Agregar_alumno extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == event.KEYCODE_BACK) {
+            setResult(RESULT_CANCELED); // Aquí configuramos el resultado como CANCELADO
             finish();
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -153,17 +158,17 @@ public class Agregar_alumno extends AppCompatActivity {
     }
 
     private void cargarDatosAlumno(int idAlumno) {
-        DbHelper conn = new DbHelper(this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
+        DbHelper conn = new DbHelper(this);
         SQLiteDatabase db = conn.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Utilidades.TABLE_ALUMNOS + " WHERE " + Utilidades.CAMPO_ID + " = " + idAlumno, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Utilidades.TABLE_ALUMNOS + " WHERE " + Utilidades.CAMPO_ID_ALUMNO + " = " + idAlumno, null);
 
         if (cursor.moveToFirst()) {
             // Verificar y obtener el índice de cada columna
             int idxNombre = cursor.getColumnIndex(Utilidades.CAMPO_NOMBRE);
-            int idxApellidos = cursor.getColumnIndex(Utilidades.CAMPO_APELLIDOS);
-            int idxEdad = cursor.getColumnIndex(Utilidades.CAMPO_EDAD);
+            int idxApellidos = cursor.getColumnIndex(Utilidades.CAMPO_APELLIDOS_ALUMNO);
+            int idxEdad = cursor.getColumnIndex(Utilidades.CAMPO_EDAD_ALUMNO);
             int idxEdadMental = cursor.getColumnIndex(Utilidades.CAMPO_EDAD_MENTAL);
-            int idxSexo = cursor.getColumnIndex(Utilidades.CAMPO_SEXO);
+            int idxSexo = cursor.getColumnIndex(Utilidades.CAMPO_SEXO_ALUMNO);
             int idxComentarios = cursor.getColumnIndex(Utilidades.CAMPO_COMENTARIOS);
 
             // Si el índice es válido (≥ 0), obtener el valor de la columna
@@ -193,5 +198,4 @@ public class Agregar_alumno extends AppCompatActivity {
         cursor.close();
         db.close();
     }
-
 }

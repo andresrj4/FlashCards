@@ -18,18 +18,18 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.flashcards_8.Entidades.Docente;
+import com.flashcards_8.Entidades.Maestro;
 import com.flashcards_8.R;
 import com.flashcards_8.Utilidades.Utilidades;
 import com.flashcards_8.db.DbHelper;
 
 import java.util.ArrayList;
 
-public class Docentes extends AppCompatActivity {
+public class Maestros extends AppCompatActivity {
 
     DbHelper conn;
     ListView LVdocentes;
-    ArrayList<Docente> listaDocentes;
+    ArrayList<Maestro> listaDocentes;
     ArrayList<String> listaInformacion;
     boolean seleccion = false;
     int idDocente;
@@ -41,7 +41,7 @@ public class Docentes extends AppCompatActivity {
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // Inicializar la conexión con la base de datos y la ListView
-        conn = new DbHelper(Docentes.this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
+        conn = new DbHelper(Maestros.this);
         LVdocentes = findViewById(R.id.LvDocentes);
         mostrarLista();
     }
@@ -49,14 +49,14 @@ public class Docentes extends AppCompatActivity {
     // Consultar la lista de docentes desde la base de datos
     private void consultarListaDocentes() {
         SQLiteDatabase db = conn.getReadableDatabase();
-        Docente docente = null;
+        Maestro docente = null;
         listaDocentes = new ArrayList<>();
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Utilidades.TABLE_DOCENTE, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Utilidades.TABLE_MAESTRO, null);
 
         while (cursor.moveToNext()) {
-            docente = new Docente();
-            docente.setId(cursor.getInt(0));
-            docente.setNombre(cursor.getString(1));
+            docente = new Maestro();
+            docente.setIdMaestro(cursor.getInt(0));
+            docente.setNombreMaestro(cursor.getString(1));
             listaDocentes.add(docente);
         }
         cursor.close();
@@ -66,8 +66,8 @@ public class Docentes extends AppCompatActivity {
     // Obtener la lista de nombres de los docentes para mostrar en la ListView
     private void obtenerLista() {
         listaInformacion = new ArrayList<>();
-        for (Docente docente : listaDocentes) {
-            listaInformacion.add(docente.getNombre());
+        for (Maestro docente : listaDocentes) {
+            listaInformacion.add(docente.getNombreMaestro());
         }
     }
 
@@ -113,7 +113,7 @@ public class Docentes extends AppCompatActivity {
         LVdocentes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long idl) {
-                idDocente = listaDocentes.get(pos).getId();
+                idDocente = listaDocentes.get(pos).getIdMaestro();
                 seleccion = true;
             }
         });
@@ -162,7 +162,7 @@ public class Docentes extends AppCompatActivity {
     // Eliminar un docente de la base de datos
     private void eliminarDocente() {
         SQLiteDatabase db = conn.getWritableDatabase();
-        db.delete(Utilidades.TABLE_DOCENTE, Utilidades.CAMPO_ID + " = " + idDocente, null);
+        db.delete(Utilidades.TABLE_MAESTRO, Utilidades.CAMPO_ID_MAESTRO + " = " + idDocente, null);
         Toast.makeText(this, "Se eliminaron todos los datos del docente", Toast.LENGTH_SHORT).show();
         db.close();
         finish();

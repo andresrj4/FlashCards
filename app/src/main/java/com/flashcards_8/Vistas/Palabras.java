@@ -40,7 +40,7 @@ public class Palabras extends AppCompatActivity {
         expandableListViewNivel1 = findViewById(R.id.expandableListViewNivel1);
         expandableListViewNivel2 = findViewById(R.id.expandableListViewNivel2);
         expandableListViewNivel3 = findViewById(R.id.expandableListViewNivel3);
-        dbHelper = new DbHelper(this, Utilidades.DATABASE_NAME, null, Utilidades.DATABASE_VERSION);
+        dbHelper = new DbHelper(this);
 
         // Preparar datos
         prepareListData();
@@ -66,8 +66,6 @@ public class Palabras extends AppCompatActivity {
             }
         });
 
-
-
         findViewById(R.id.btnEliminarPalabra).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +75,14 @@ public class Palabras extends AppCompatActivity {
                 } else {
                     Toast.makeText(Palabras.this, "Seleccione una palabra para eliminar", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        findViewById(R.id.btnEstadisticasPalabras).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Palabras.this, DetallesPorPalabra.class);
+                startActivity(intent);
             }
         });
 
@@ -106,9 +112,9 @@ public class Palabras extends AppCompatActivity {
         Set<String> eliminatedWords = SharedPreferencesUtil.getEliminatedWords(this);
 
         // Añadir datos de cada nivel
-        List<String> nivel1 = cargarPalabrasNivel(Utilidades.TABLE_PALABRAS_NIVEL1, eliminatedWords);
-        List<String> nivel2 = cargarPalabrasNivel(Utilidades.TABLE_PALABRAS_NIVEL2, eliminatedWords);
-        List<String> nivel3 = cargarPalabrasNivel(Utilidades.TABLE_PALABRAS_NIVEL3, eliminatedWords);
+        List<String> nivel1 = cargarPalabrasNivel(1, eliminatedWords);
+        List<String> nivel2 = cargarPalabrasNivel(2, eliminatedWords);
+        List<String> nivel3 = cargarPalabrasNivel(3, eliminatedWords);
 
         // Vincular los datos de cada nivel con su encabezado
         listDataChildNivel1.put(listDataHeaderNivel1.get(0), nivel1);
@@ -116,14 +122,14 @@ public class Palabras extends AppCompatActivity {
         listDataChildNivel3.put(listDataHeaderNivel3.get(0), nivel3);
     }
 
-    private List<String> cargarPalabrasNivel(String tableName, Set<String> eliminatedWords) {
+    private List<String> cargarPalabrasNivel(int nivel, Set<String> eliminatedWords) {
         List<String> palabras = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT " + Utilidades.CAMPO_PALABRA + " FROM " + tableName, null);
+        Cursor cursor = db.rawQuery("SELECT " + Utilidades.CAMPO_TEXTO_PALABRA + " FROM " + Utilidades.TABLE_PALABRAS + " WHERE " + Utilidades.CAMPO_NIVEL_PALABRA + " = ?", new String[]{String.valueOf(nivel)});
         if (cursor.moveToFirst()) {
             do {
-                String palabra = cursor.getString(cursor.getColumnIndexOrThrow(Utilidades.CAMPO_PALABRA));
+                String palabra = cursor.getString(cursor.getColumnIndexOrThrow(Utilidades.CAMPO_TEXTO_PALABRA));
                 if (!eliminatedWords.contains(palabra)) {
                     palabras.add(palabra);
                 }
@@ -138,25 +144,25 @@ public class Palabras extends AppCompatActivity {
     //Logica para eliminar palabras
     private void eliminarPalabraSeleccionada() {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String tableName;
+        int nivel;
 
         switch (selectedGroup) {
             case "Nivel 1":
-                tableName = Utilidades.TABLE_PALABRAS_NIVEL1;
+                nivel = 1;
                 break;
             case "Nivel 2":
-                tableName = Utilidades.TABLE_PALABRAS_NIVEL2;
+                nivel = 2;
                 break;
             case "Nivel 3":
-                tableName = Utilidades.TABLE_PALABRAS_NIVEL3;
+                nivel = 3;
                 break;
             default:
-                tableName = null;
+                nivel = -1;
                 break;
         }
 
-        if (tableName != null) {
-            db.delete(tableName, Utilidades.CAMPO_PALABRA + "=?", new String[]{selectedWord});
+        if (nivel != -1) {
+            db.delete(Utilidades.TABLE_PALABRAS, Utilidades.CAMPO_TEXTO_PALABRA + "=? AND " + Utilidades.CAMPO_NIVEL_PALABRA + "=?", new String[]{selectedWord, String.valueOf(nivel)});
             SharedPreferencesUtil.addEliminatedWord(this, selectedWord);  // Registrar la palabra eliminada en SharedPreferences
             db.close();
             Toast.makeText(this, "Palabra eliminada: " + selectedWord, Toast.LENGTH_SHORT).show();
@@ -169,7 +175,6 @@ public class Palabras extends AppCompatActivity {
             Toast.makeText(this, "Error al eliminar la palabra", Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void setOnChildClickListener(ExpandableListView expandableListView, final String nivel) {
         expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {

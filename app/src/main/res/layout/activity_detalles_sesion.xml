@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".Vistas.DetallesSesion">
+
+    <!-- LinearLayout para detalles de la sesión -->
+    <LinearLayout
+        android:id="@+id/LL_DetallesSesion"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:background="@color/Azul_zodiaco"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/IMGSesion"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/lista2" />
+
+            <TextView
+                android:id="@+id/txtSesion_Alumno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Detalles de Sesion "
+                android:textColor="#FFFFFF"
+                android:textSize="20dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="center"
+                app:layout_constraintHorizontal_bias="0.300"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/IMGSesion" />
+
+            <TextView
+                android:id="@+id/txtAlumnoSesion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/baloo"
+                android:gravity="center"
+                android:text="Alumno"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.506"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtSesion_Alumno" />
+
+            <Button
+                android:id="@+id/btnSalirSesion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/purple_500"
+                android:onClick="onclick"
+                android:text="@string/btn_volver"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.884" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+
+    <!-- Detalles de la sesión -->
+    <LinearLayout
+        android:id="@+id/LLDetallesSesion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@+id/LL_DetallesSesion"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/txtSesionId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ID de Sesión"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtTipoSesion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo de Sesión"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtFechaSesion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha de Sesión"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtNivelSesionDetalles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nivel"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtDuracionSesion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duración"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtIntervaloSesion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Intervalo de Sesión"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtNumeroPalabras"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Número de Palabras"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/txtCalificacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Calificación"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:paddingBottom="8dp" />
+    </LinearLayout>
+
+    <!-- Tabla para la lista de palabras -->
+    <LinearLayout
+        android:id="@+id/tablaPalabras"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:stretchColumns="1"
+        android:padding="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/LLDetallesSesion"
+        app:layout_constraintStart_toEndOf="@+id/LL_DetallesSesion"
+        app:layout_constraintEnd_toStartOf="@+id/graficoPastel">
+
+        <!-- Cabeceras de la tabla -->
+        <TextView
+            android:id="@+id/columnaTextoPalabra"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Palabra"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/columnaVisualizaciones"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Visualizaciones"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/columnaTiempoEnPantalla"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tiempo en Pantalla"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/columnaReproducciones"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reproducciones"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/columnaResultado"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Resultado"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- RecyclerView para la lista de palabras -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPalabras"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/tablaPalabras"
+        app:layout_constraintStart_toEndOf="@+id/LL_DetallesSesion"
+        app:layout_constraintEnd_toStartOf="@+id/graficoPastel"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:scrollbars="vertical"/>
+
+    <!-- Título del gráfico -->
+    <TextView
+        android:id="@+id/tituloGrafico"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Distribución de tiempo de sesión por palabra"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tablaPalabras"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp" />
+
+    <!-- Gráfico de pastel -->
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/graficoPastel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/tituloGrafico"
+        app:layout_constraintStart_toEndOf="@+id/tablaPalabras"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:padding="16dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
